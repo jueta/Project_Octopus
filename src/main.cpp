@@ -1,16 +1,10 @@
 
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include "soc/soc.h"
-#include "soc/rtc_cntl_reg.h"
-#include "esp_camera.h"
-#include <UniversalTelegramBot.h>
-#include <ArduinoJson.h>
-#include <Wire.h>
+#include <camera.h>
+
 
 // Replace with your network credentials
-const char *ssid = "SNOWWHITE BIG";
-const char *password = "MRJ2023!";
+const char *ssid = "Casassanta2";
+const char *password = "becky123";
 
 // Use @myidbot to find out the chat ID of an individual or a group
 // Also note that you need to click "start" on a bot before it can
@@ -26,27 +20,9 @@ WiFiClientSecure clientTCP;
 
 UniversalTelegramBot bot(BOTtoken, clientTCP);
 
-//CAMERA_MODEL_AI_THINKER
-#define PWDN_GPIO_NUM     32
-#define RESET_GPIO_NUM    -1
-#define XCLK_GPIO_NUM      0
-#define SIOD_GPIO_NUM     26
-#define SIOC_GPIO_NUM     27
 
-#define Y9_GPIO_NUM       35
-#define Y8_GPIO_NUM       34
-#define Y7_GPIO_NUM       39
-#define Y6_GPIO_NUM       36
-#define Y5_GPIO_NUM       21
-#define Y4_GPIO_NUM       19
-#define Y3_GPIO_NUM       18
-#define Y2_GPIO_NUM        5
-#define VSYNC_GPIO_NUM    25
-#define HREF_GPIO_NUM     23
-#define PCLK_GPIO_NUM     22
-
-#define FLASH_LED_PIN 4
 bool flashState = LOW;
+
 
 // Motion Sensor
 bool motionDetected = false;
@@ -55,8 +31,6 @@ bool motionDetected = false;
 int botRequestDelay = 1000;   // mean time between scan messages
 long lastTimeBotRan;     // last time messages' scan has been done
 
-void handleNewMessages(int numNewMessages);
-String sendPhotoTelegram();
 
 
 // Indicates when motion is detected
@@ -142,19 +116,24 @@ void setup(){
   if (err != ESP_OK){
     Serial.printf("set intr type failed with error 0x%x \r\n", err);
   }
+
+  for(int i = 0; i < 5; i++){
+    digitalWrite(FLASH_LED_PIN, i % 2);
+  }
+
 }
 
 void loop(){
   if (sendPhoto){
     Serial.println("Preparing photo");
-    sendPhotoTelegram(); 
+    sendPhotoTelegram(clientTCP, chatId, BOTtoken); 
     sendPhoto = false; 
   }
 
   if(motionDetected){
     bot.sendMessage(chatId, "Motion detected!!", "");
     Serial.println("Motion Detected");
-    sendPhotoTelegram();
+    sendPhotoTelegram(clientTCP, chatId, BOTtoken);
     motionDetected = false;
   }
   
@@ -162,130 +141,9 @@ void loop(){
     int numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     while (numNewMessages){
       Serial.println("got response");
-      handleNewMessages(numNewMessages);
+      handleNewMessages(numNewMessages, sendPhoto, clientTCP, chatId, BOTtoken, bot, flashState);
       numNewMessages = bot.getUpdates(bot.last_message_received + 1);
     }
     lastTimeBotRan = millis();
-  }
-}
-
-String sendPhotoTelegram(){
-  const char* myDomain = "api.telegram.org";
-  String getAll = "";
-  String getBody = "";
-
-  camera_fb_t * fb = NULL;
-  fb = esp_camera_fb_get();  
-  if(!fb) {
-    Serial.println("Camera capture failed");
-    delay(1000);
-    ESP.restart();
-    return "Camera capture failed";
-  }  
-  
-  Serial.println("Connect to " + String(myDomain));
-
-  if (clientTCP.connect(myDomain, 443)) {
-    Serial.println("Connection successful");
-    
-    String head = "--RandomNerdTutorials\r\nContent-Disposition: form-data; name=\"chat_id\"; \r\n\r\n" + chatId + "\r\n--RandomNerdTutorials\r\nContent-Disposition: form-data; name=\"photo\"; filename=\"esp32-cam.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n";
-    String tail = "\r\n--RandomNerdTutorials--\r\n";
-
-    uint16_t imageLen = fb->len;
-    uint16_t extraLen = head.length() + tail.length();
-    uint16_t totalLen = imageLen + extraLen;
-  
-    clientTCP.println("POST /bot"+BOTtoken+"/sendPhoto HTTP/1.1");
-    clientTCP.println("Host: " + String(myDomain));
-    clientTCP.println("Content-Length: " + String(totalLen));
-    clientTCP.println("Content-Type: multipart/form-data; boundary=RandomNerdTutorials");
-    clientTCP.println();
-    clientTCP.print(head);
-  
-    uint8_t *fbBuf = fb->buf;
-    size_t fbLen = fb->len;
-    for (size_t n=0;n<fbLen;n=n+1024) {
-      if (n+1024<fbLen) {
-        clientTCP.write(fbBuf, 1024);
-        fbBuf += 1024;
-      }
-      else if (fbLen%1024>0) {
-        size_t remainder = fbLen%1024;
-        clientTCP.write(fbBuf, remainder);
-      }
-    }  
-    
-    clientTCP.print(tail);
-    
-    esp_camera_fb_return(fb);
-    
-    int waitTime = 10000;   // timeout 10 seconds
-    long startTimer = millis();
-    boolean state = false;
-    
-    while ((startTimer + waitTime) > millis()){
-      Serial.print(".");
-      delay(100);      
-      while (clientTCP.available()) {
-        char c = clientTCP.read();
-        if (state==true) getBody += String(c);        
-        if (c == '\n') {
-          if (getAll.length()==0) state=true; 
-          getAll = "";
-        } 
-        else if (c != '\r')
-          getAll += String(c);
-        startTimer = millis();
-      }
-      if (getBody.length()>0) break;
-    }
-    clientTCP.stop();
-    Serial.println(getBody);
-  }
-  else {
-    getBody="Connected to api.telegram.org failed.";
-    Serial.println("Connected to api.telegram.org failed.");
-  }
-  return getBody;
-}
-
-void handleNewMessages(int numNewMessages){
-  Serial.print("Handle New Messages: ");
-  Serial.println(numNewMessages);
-
-  for (int i = 0; i < numNewMessages; i++){
-    // Chat id of the requester
-    String chat_id = String(bot.messages[i].chat_id);
-    if (chat_id != chatId){
-      bot.sendMessage(chat_id, "Unauthorized user", "");
-      continue;
-    }
-    
-    // Print the received message
-    String text = bot.messages[i].text;
-    Serial.println(text);
-
-    String fromName = bot.messages[i].from_name;
-
-    if (text == "/flash") {
-      flashState = !flashState;
-      digitalWrite(FLASH_LED_PIN, flashState);
-    }
-    if (text == "/photo") {
-      sendPhoto = true;
-      Serial.println("New photo  request");
-    }
-    if (text == "/readings"){
-      String readings = "DEU BOM!";
-      bot.sendMessage(chatId, readings, "");
-    }
-    if (text == "/start"){
-      String welcome = "Welcome to the ESP32-CAM Telegram bot.\n";
-      welcome += "/photo : takes a new photo\n";
-      welcome += "/flash : toggle flash LED\n";
-      welcome += "/readings : request sensor readings\n\n";
-      welcome += "You'll receive a photo whenever motion is detected.\n";
-      bot.sendMessage(chatId, welcome, "Markdown");
-    }
   }
 }
