@@ -4,6 +4,7 @@
         "esp_camera.h": "c",
         "universaltelegrambot.h": "c",
         "arduinojson.h": "c",
-        "wificlientsecure.h": "c"
+        "wificlientsecure.h": "c",
+        "random": "cpp"
     }
 }

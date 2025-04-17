@@ -31,7 +31,8 @@
 
 #define FLASH_LED_PIN 4
 
-String sendPhotoTelegram(WiFiClientSecure clientTCP, String chatId, String BOTtoken);
+String sendPhotoTelegram(WiFiClientSecure *clientTCP, String chatId, String BOTtoken);
 
-void handleNewMessages(int numNewMessages, bool sendPhoto, WiFiClientSecure clientTCP, String chatId, String BOTtoken, UniversalTelegramBot bot, bool flashState);
+void handleNewMessages(int numNewMessages, bool *sendPhoto, WiFiClientSecure *clientTCP, String chatId, String BOTtoken, UniversalTelegramBot *bot, bool *flashState);
 
+void configInitCamera();

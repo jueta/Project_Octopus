@@ -32,16 +32,15 @@ online mode (future idea) -> be able to take pictures from webpage.
 RGB led colours will indicate operation mode
 
 
-CURRENT FUNCTIONALITY:
+MAIN REF:
 
-It's sending picture into a certain ip address (raspiberry pi). The raspberry Pi is connected to the same wifi network running a PHP server and storing the pictures. The idea is that esp32 can come back to sleep.
+https://randomnerdtutorials.com/telegram-esp32-cam-photo-arduino/
 
 
-TUTORIALS FOLLOWED:
+CREATE FIRST BOT: open in telegram the following bots
 
-https://randomnerdtutorials.com/esp32-cam-post-image-photo-server/
-
-https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/
+BotFather -> for BOTtoken
+IDBot -> for chatID
 
 
 
@@ -53,5 +52,16 @@ https://RandomNerdTutorials.com/esp32-cam-shield-pcb-telegram/
 Brian Lough's Universal Telegram Bot Library: 
 https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+
+
+--------------- DOWN IS DEPRECATED ------------------
+
+PI VERSION TUTORIALS:
+
+https://randomnerdtutorials.com/esp32-cam-post-image-photo-server/
+
+https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/
+
+OUTDATED FUNCTIONALITY:
+
+It's sending picture into a certain ip address (raspiberry pi). The raspberry Pi is connected to the same wifi network running a PHP server and storing the pictures. The idea is that esp32 can come back to sleep.
