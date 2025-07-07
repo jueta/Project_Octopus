@@ -41,11 +41,11 @@ long lastTimeBotRan;     // last time messages' scan has been done
 
 void setup(){
 
-  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
+  // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); 
   Serial.begin(115200);
   
-  pinMode(FLASH_LED_PIN, OUTPUT);
-  digitalWrite(FLASH_LED_PIN, flashState);
+  // pinMode(FLASH_LED_PIN, OUTPUT);
+  // digitalWrite(FLASH_LED_PIN, flashState);
 
   // Config and init the camera
   configInitCamera();
@@ -78,10 +78,10 @@ void setup(){
   // }
 
   // Supposely blink flash
-  for(int i = 0; i < 5; i++){
-    digitalWrite(FLASH_LED_PIN, i % 2);
-    delay(500);
-  }
+  // for(int i = 0; i < 5; i++){
+  //   digitalWrite(FLASH_LED_PIN, i % 2);
+  //   delay(500);
+  // }
 
 }
 
@@ -108,6 +108,9 @@ void loop(){
     }
     lastTimeBotRan = millis();
   }
+
+  delay(1000); // allow time for monitor to connect
+  Serial.println("Hello from XIAO ESP32S3!");
 }
 
 
