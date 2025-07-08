@@ -1,5 +1,6 @@
 Project Description
 
+
 ![alt text](docs/v3.JPG)
 
 HARDWARE:
@@ -31,6 +32,9 @@ online mode (future idea) -> be able to take pictures from webpage.
 
 RGB led colours will indicate operation mode
 
+
+FLASHING TIPS:
+when using esp xiao unplug and replub it pressing BOOT button 
 
 MAIN REF:
 
