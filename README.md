@@ -69,3 +69,6 @@ https://randomnerdtutorials.com/raspberry-pi-apache-mysql-php-lamp-server/
 OUTDATED FUNCTIONALITY:
 
 It's sending picture into a certain ip address (raspiberry pi). The raspberry Pi is connected to the same wifi network running a PHP server and storing the pictures. The idea is that esp32 can come back to sleep.
+
+DEPRECATED 3D MODEL: v0.1
+https://www.thingiverse.com/thing:7133622

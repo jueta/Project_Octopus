@@ -79,7 +79,8 @@ void setup()
 
   Serial.println("Sleeping now...");
   delay(100);
-  esp_deep_sleep_start();
+  // UNCOMENT LINE BELOW TO ENABLE DEEP SLEEP
+  // esp_deep_sleep_start();
 }
 
 void loop()
