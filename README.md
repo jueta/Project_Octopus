@@ -5,16 +5,15 @@ Project Description
 
 HARDWARE:
 
-esp32-cam
-FIR sensor
+ESP32S3 Xiao Board + CAM
+PIR sensor -> SB00322A-1 // OLD: AMS312
 Battery
-RGB leds
 switch
 case
 
 GOAL FUNCTIONALITY:
 
-Connect to local wifi through web-page to insert login password and email adress to be sent.
+Connect to local wifi through web-page to configure Telegram bot and account.
 
 off mode (HW implemented) -> using the switch to ON/OFF the device.
 
@@ -22,23 +21,15 @@ Battery powered
 
 3D printed case - artistic and adaptable
 
-standby mode (Main function) -> reading FIR sensor and, case activated, take 3 pictures and send to email.
+    Picture mode (Main function) -> reading PIR sensor and, case activated, take 3 pictures and send to email.
 
     filming mode -> this will require lots of energy to record, connect to wifi, upload and send email. Must happen rarely.
 
-    scanning mode -> PIR is a passive sensor so this must be in low energy mode.
+    scanning/sleeping mode -> PIR is a passive sensor so this must be in low energy mode.
 
 online mode (future idea) -> be able to take pictures from webpage.
 
 RGB led colours will indicate operation mode
-
-
-FLASHING TIPS:
-when using esp xiao unplug and replub it pressing BOOT button 
-
-MAIN REF:
-
-https://randomnerdtutorials.com/telegram-esp32-cam-photo-arduino/
 
 
 CREATE FIRST BOT: open in telegram the following bots
@@ -46,7 +37,11 @@ CREATE FIRST BOT: open in telegram the following bots
 BotFather -> for BOTtoken
 IDBot -> for chatID
 
+HW:
+solder 2 100k ohms resistors as a voltage dividor to read the battery voltage at pin D0.
 
+MAIN REF:
+https://randomnerdtutorials.com/telegram-esp32-cam-photo-arduino/
 
 Project references: 
 

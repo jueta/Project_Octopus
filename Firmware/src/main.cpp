@@ -5,6 +5,8 @@
 #include "esp_camera.h"
 #include "esp_sleep.h"
 
+#define BATTERY_ADC_PIN A0  // A0 on XIAO ESP32S3 -> for battery voltage monitoring
+
 // Replace with your WiFi and bot credentials
 const char *ssid = "Casassanta2";
 const char *password = "becky123";
@@ -27,6 +29,13 @@ void blink_led(int times, int delay_ms = 200)
   }
 }
 
+float readBatteryVoltage() {
+  int raw = analogRead(BATTERY_ADC_PIN);     // 12-bit ADC (0–4095)
+  float voltage = (raw / 4095.0) * 3.3;      // scale to 3.3V reference
+  voltage *= 2;  // adjust for internal divider (1/2 scaling)
+  return voltage;
+}
+
 void setup()
 {
 
@@ -34,6 +43,9 @@ void setup()
   pinMode(PIR_GPIO, INPUT_PULLDOWN); // Most PIRs idle LOW, go HIGH on motion
   pinMode(LED_BUILTIN, OUTPUT);
   delay(1000);
+
+  float vbat = readBatteryVoltage();
+  Serial.printf("Battery voltage: %.2f V\n", vbat);
 
   // Only run after wakeup from PIR
   // if (esp_sleep_get_wakeup_cause() == ESP_SLEEP_WAKEUP_EXT0)
@@ -62,6 +74,8 @@ void setup()
 
     // Send photo
     bot.sendMessage(chatId, "Motion detected! Sending photo...", "");
+    String vbatMsg = String("Battery Voltage: ") + String(vbat, 2) + " V";
+    bot.sendMessage(chatId, vbatMsg, "");
     sendPhotoTelegram(&clientTCP, chatId, BOTtoken);
   // }
 
@@ -77,10 +91,15 @@ void setup()
   // EXT1: Wake on HIGH signal from PIR
   esp_sleep_enable_ext1_wakeup(1ULL << PIR_GPIO, ESP_EXT1_WAKEUP_ANY_HIGH);
 
-  Serial.println("Sleeping now...");
-  delay(100);
+  // Serial.println("Sleeping now...");
+  // delay(100);
   // UNCOMENT LINE BELOW TO ENABLE DEEP SLEEP
   // esp_deep_sleep_start();
+
+  // For debugging without deep sleep
+  Serial.println("Restarting now...");
+  delay(3000); // wait 5 minutes before restart
+  ESP.restart();   // works in Arduino framework
 }
 
 void loop()
