@@ -4,3 +4,4 @@
 .vscode/launch.json
 .vscode/ipch
 .DS_Store
+v5/Firmware/include/secrets.h

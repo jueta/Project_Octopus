@@ -8,10 +8,10 @@
 #define BATTERY_ADC_PIN A0  // A0 on XIAO ESP32S3 -> for battery voltage monitoring
 
 // Replace with your WiFi and bot credentials
-const char *ssid = "Casassanta2";
-const char *password = "becky123";
-String chatId = "7013307530";
-String BOTtoken = "7444230490:AAH6sSvrSa69PozjPk_JgiOw_o0Fu9r02-c";
+const char *ssid = "YOUR_WIFI_SSID";
+const char *password = "YOUR_WIFI_PASSWORD";
+String chatId = "YOUR_TELEGRAM_CHAT_ID";
+String BOTtoken = "YOUR_TELEGRAM_BOT_TOKEN";
 
 WiFiClientSecure clientTCP;
 UniversalTelegramBot bot(BOTtoken, clientTCP);

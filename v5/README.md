@@ -8,11 +8,11 @@ Current direction:
 
 - wired power instead of a battery-first design,
 - a smaller enclosure around the tiny camera board,
-- a cleaner firmware baseline,
+- a complete Telegram-connected camera firmware,
 - room to decide later whether PIR still belongs in the product.
 
 Workspace structure:
 
-- [`Firmware/`](Firmware/): active PlatformIO firmware scaffold
+- [`Firmware/`](Firmware/): active PlatformIO firmware with camera capture, Telegram chatbot commands, PIR alerts, telemetry, and optional deep sleep
 - [`Hardware/`](Hardware/): active CAD, wiring, and enclosure work
 - [`docs/`](docs/): active notes, sketches, decisions, and planning

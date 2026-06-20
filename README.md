@@ -157,7 +157,7 @@ Main files:
 
 ### Current limitations in the archived code
 
-- Wi-Fi and Telegram secrets are hardcoded,
+- Wi-Fi and Telegram configuration still lives directly in the historical `main.cpp` snapshot,
 - deep sleep is still disabled for debugging,
 - the code is tied to the battery and PIR assumptions,
 - there are no automated tests yet.
@@ -171,22 +171,20 @@ pio run -e seeed_xiao_esp32s3
 
 ## Active v5 Workspace
 
-The new active development area lives under [`v5/`](v5/).
+The active implementation lives under [`v5/`](v5/). Its firmware restores and consolidates the strongest software from the earlier prototypes into a portfolio-ready XIAO ESP32S3 camera:
 
-It starts intentionally small:
+- OV2640 camera initialization with PSRAM-aware frame buffers,
+- TLS photo uploads to the Telegram Bot API,
+- an interactive `/photo`, `/status`, `/led`, `/sleep`, and `/help` chatbot,
+- owner-only command authorization,
+- PIR-triggered photos with a motion cooldown,
+- battery, network, wake-reason, uptime, and heap telemetry,
+- optional PIR wake and deep sleep from the battery-era design,
+- local credentials kept outside source control.
 
-- [`v5/Firmware/`](v5/Firmware/) is a clean PlatformIO scaffold for the wired redesign,
-- [`v5/Hardware/`](v5/Hardware/) is where new enclosure and hardware decisions should go,
-- [`v5/docs/`](v5/docs/) is for design notes, decisions, and architecture planning.
+The wired v5 configuration remains online by default so Telegram commands are responsive. The low-power wake, photograph, and sleep loop can be enabled with one configuration switch.
 
-### Current v5 priorities
-
-- define the wired architecture,
-- decide whether the PIR sensor stays in scope,
-- design a smaller enclosure around the tiny camera board,
-- separate future networking, capture, and streaming decisions cleanly,
-- remove secrets from source control everywhere,
-- build toward a cleaner portfolio-ready project structure.
+See [`v5/Firmware/README.md`](v5/Firmware/README.md) for setup, architecture, build, and upload instructions. Hardware and enclosure work remains in [`v5/Hardware/`](v5/Hardware/), with active design notes in [`v5/docs/`](v5/docs/).
 
 ## Hardware Snapshot
 
@@ -206,7 +204,7 @@ Useful archived hardware references:
 
 ## Working With The Current Prototype
 
-If you want to build and test the archived battery-era firmware baseline, use the following workflow.
+Use the active v5 firmware for the complete camera and Telegram chatbot implementation.
 
 ### 1. Install PlatformIO
 
@@ -215,7 +213,7 @@ Recommended options:
 - [PlatformIO IDE](https://platformio.org/platformio-ide) for VS Code
 - [PlatformIO Core](https://platformio.org/install/cli) for terminal-based development
 
-Archived target:
+Active target:
 
 - board: `seeed_xiao_esp32s3`
 - framework: `arduino`
@@ -229,31 +227,31 @@ Use the following Telegram bots:
 
 ### 3. Configure local secrets
 
-Edit [`archive/v4/Firmware/src/main.cpp`](archive/v4/Firmware/src/main.cpp) and replace:
+```bash
+cd v5/Firmware
+cp include/secrets.example.h include/secrets.h
+```
 
-- `ssid`
-- `password`
-- `chatId`
-- `BOTtoken`
+Edit `include/secrets.h` with your Wi-Fi SSID/password, Telegram bot token, and authorized chat ID. This local file is ignored by Git.
 
 ### 4. Build
 
 ```bash
-cd archive/v4/Firmware
+cd v5/Firmware
 pio run -e seeed_xiao_esp32s3
 ```
 
 ### 5. Upload
 
 ```bash
-cd archive/v4/Firmware
+cd v5/Firmware
 pio run -t upload -e seeed_xiao_esp32s3
 ```
 
 ### 6. Open the serial monitor
 
 ```bash
-cd archive/v4/Firmware
+cd v5/Firmware
 pio device monitor -b 115200
 ```
 
